@@ -1,36 +1,44 @@
 # @nuxtjp/commerce
 
-Provider-neutral commerce state contracts and presentation components for
-Nuxt 4. The package displays payment and entitlement state, then emits a
-checkout handoff **request**. It never performs payment work.
+決済・利用権の状態を表示し、明示的な購入手続きへの引き継ぎ要求を作れます。
 
-## Boundary
+## 利用前の確認
 
-This package contains:
+実装済みの範囲、必要な依存関係、検証コマンドを以下の英語説明に併記しています。操作・配備・公開は、それぞれの権限と設定を確認してから実施してください。
 
-- a versioned JSON Schema and matching TypeScript types;
-- fail-closed runtime guards for untrusted state;
-- status and checkout-handoff presentation components;
-- a composable and pure functions for consumer-owned UI.
+## 使い方
 
-It intentionally contains no provider SDK, credential, token, checkout URL,
-storage, network request, redirect, or payment execution. A separate
-application adapter may handle the emitted request after applying its own
-authorization and provider policy.
+リポジトリ内のサンプル・スキーマ・実装を確認し、用途に必要な入力を明示して利用します。下記のGetting startedに、現行設定に対応する検証コマンドを示しています。
 
-## Install
+検証結果は実行した範囲だけを示します。未実装の機能、未設定の接続、配備環境の確認を合格扱いにしないでください。
+
+## English
+
+Display payment and entitlement state and request an explicit checkout handoff.
+
+## What you can do
+
+- Validate commerce-state documents.
+- Render status and emit a bounded handoff request.
+
+## Current scope
+
+The module does not execute payments or redirect to a provider. The application validates and handles the request.
+
+Package distribution is not activated by this documentation. Use the checked-in source and the declared dependency versions; published availability must be verified separately.
+
+## Getting started
+
+Use `pnpm@10.29.3` and the Node.js version declared in `engines` in `package.json`. Run from this repository:
 
 ```sh
-pnpm add ./nuxtjp-commerce-0.1.0.tgz
+pnpm install --frozen-lockfile
+pnpm typecheck
+pnpm test
+pnpm build
 ```
 
-```ts
-export default defineNuxtConfig({
-  modules: ['@nuxtjp/commerce']
-})
-```
-
-The optional module setting `componentPrefix` defaults to `NuxtJp`.
+## Examples and interface details
 
 ## Contract
 
@@ -59,49 +67,10 @@ if (result.valid) {
 }
 ```
 
-## Nuxt UI
+## Documentation and source
 
-```vue
-<NuxtJpCommerceStatus :state="state" locale="ja" />
-<NuxtJpCheckoutHandoff
-  :state="state"
-  locale="ja"
-  @request="sendToApplicationAdapter"
-/>
-```
+[Interface reference](docs/interface-reference.md)
 
-`NuxtJpCheckoutHandoff` renders a button only as an intent surface. It emits:
+[Usage guide](docs/getting-started.md)
 
-```ts
-{
-  schema: 'nuxtjp://commerce/checkout-handoff-request/v1',
-  intent: 'continue_checkout',
-  handoffId,
-  subjectId,
-  offeringId,
-  requestedAt
-}
-```
-
-It does not navigate or contact any service. Invalid, non-ready, or expired
-handoffs remain disabled.
-
-The auto-imported `useCommerceState(source, locale?, now?)` returns computed
-`validation`, `snapshot`, and `presentation` values. The optional clock makes
-expiry behavior deterministic in tests and simulations.
-
-## Verify locally
-
-```sh
-pnpm install --offline
-pnpm typecheck
-pnpm test
-pnpm build
-```
-
-The playground is a presentation-only build fixture:
-
-```sh
-pnpm nuxt dev playground
-```
-
+[Schemas](schemas) · [Implementation and public interfaces](src) · [Verification cases](test) · [Contributing](CONTRIBUTING.md) · [Security reporting](SECURITY.md) · [License](LICENSE) · [Attribution notices](NOTICE)

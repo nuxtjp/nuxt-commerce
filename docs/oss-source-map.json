@@ -1,0 +1,138 @@
+{
+  "repository": "nuxtjp/nuxt-commerce",
+  "purpose": "決済・利用権の状態を表示し、明示的な購入手続きへの引き継ぎ要求を作れます。 / Display payment and entitlement state and request an explicit checkout handoff.",
+  "responsibility_boundary": "Own the documented Nuxt/browser interface and its public contracts. Account authority, external effects, product state and production hosting remain explicit consumer responsibilities.",
+  "packages": [
+    {
+      "manifest": "package.json",
+      "package": "@nuxtjp/commerce",
+      "ecosystem": "npm",
+      "description": "Provider-neutral commerce state contracts and presentation for Nuxt",
+      "interfaces": {
+        "exports": {
+          ".": {
+            "types": "./dist/types.d.mts",
+            "import": "./dist/module.mjs"
+          },
+          "./core": {
+            "types": "./dist/runtime/core/index.d.ts",
+            "import": "./dist/runtime/core/index.js"
+          },
+          "./schema": "./schemas/commerce-state-v1.schema.json"
+        },
+        "bin": {},
+        "main": "./dist/module.mjs",
+        "types": "./dist/types.d.mts"
+      },
+      "declared_commands": {
+        "build": "nuxt-module-build build && nuxt build playground",
+        "typecheck": "vue-tsc --noEmit --project tsconfig.json",
+        "test": "vitest run && pnpm run test:dependency-security",
+        "prepack": "pnpm run build",
+        "test:dependency-security": "node --test scripts/dependency-security.check.cjs"
+      }
+    }
+  ],
+  "schema_definitions": [
+    "schemas/commerce-state-v1.schema.json"
+  ],
+  "test_sources": [
+    "test/fixtures.ts",
+    "test/handoff.test.ts",
+    "test/presentation.test.ts",
+    "test/schema.test.ts",
+    "test/validation.test.ts"
+  ],
+  "example_sources": [
+    "playground/app.vue",
+    "playground/nuxt.config.ts",
+    "playground/state.ts"
+  ],
+  "workflow_definitions": [
+    {
+      "path": ".github/workflows/dependency-security.yml",
+      "jobs": [
+        {
+          "job": "security",
+          "condition": null,
+          "runs_on": "ubuntu-24.04",
+          "steps": [
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": null,
+              "uses": "pnpm/action-setup@f520eceda224fe1a4aed5a2a27a194379a409996",
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38",
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": "pnpm install --frozen-lockfile --ignore-scripts",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": "pnpm run test",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": null,
+              "run": "pnpm run build",
+              "uses": null,
+              "condition": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": ".github/workflows/oss-policy.yml",
+      "jobs": [
+        {
+          "job": "repository-policy",
+          "condition": null,
+          "runs_on": "ubuntu-latest",
+          "steps": [
+            {
+              "name": null,
+              "run": null,
+              "uses": "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+              "condition": null
+            },
+            {
+              "name": "Verify repository policy",
+              "run": "python3 .github/oss-policy-check.py",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Verify policy regression tests",
+              "run": "cd .github && python3 -m unittest discover -s policy-tests",
+              "uses": null,
+              "condition": null
+            },
+            {
+              "name": "Check policy types",
+              "run": "python3 -m venv \"$RUNNER_TEMP/policy-types\"\n\"$RUNNER_TEMP/policy-types/bin/pip\" install -r .github/policy/requirements.txt\n\"$RUNNER_TEMP/policy-types/bin/mypy\" --strict .github/policy .github/oss-policy-check.py .github/policy-tests\n",
+              "uses": null,
+              "condition": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "evidence_policy": "Declarations and source paths are not proof of an executed acceptance. Exact CI head and result are recorded separately. No live accounts or production acceptance is inferred."
+}

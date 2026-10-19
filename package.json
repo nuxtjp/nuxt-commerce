@@ -68,5 +68,12 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/nuxtjp/nuxt-commerce.git"
-  }
+  },
+  "keywords": [
+    "nuxt",
+    "vue",
+    "commerce",
+    "entitlements",
+    "typescript"
+  ]
 }
